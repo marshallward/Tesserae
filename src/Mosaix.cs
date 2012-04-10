@@ -33,32 +33,28 @@ namespace Mosaix
                 spriteSheet.Add(ts.Name, cntMgr.Load<Texture2D>(tsPath));
                 
                 // Loop hoisting
-                var tsWidth = ts.image.width / ts.tileWidth;
-                var tsHeight = ts.image.height / ts.tileHeight;
+                var widthCount = ts.image.width / ts.tileWidth;
+                var heightCount = ts.image.height / ts.tileHeight;
                 
                 // Pre-compute tileset rectangles
                 tileRect = new Dictionary<uint, Rectangle>();
-                for (var j = 0; j < tsHeight; j++)
+                for (var j = 0; j < heightCount; j++)
                 {
-                    for (var i = 0; i < tsWidth; i++)
+                    for (var i = 0; i < widthCount; i++)
                     {
                         var x = ts.spacing + i*(ts.tileWidth + ts.margin);
                         var y = ts.spacing + j*(ts.tileHeight + ts.margin);
                         var rect = new Rectangle(x, y,
                                                  ts.tileWidth, ts.tileHeight);
-                        uint id = ts.firstGid + (uint)(i + j*tsWidth);
+                        uint id = ts.firstGid + (uint)(i + j*widthCount);
                         tileRect.Add(id, rect);
                     }
                 }
                 
-                // Load tile maps
-                {
-                    // Load maps
-                    // Pre-compute window rectangles
-                }
+                // Ignore properties for now
             }
             
-            // Load tile ID maps
+            // Load id maps
             foreach (var layer in tmxMap.layer)
             {
                 
