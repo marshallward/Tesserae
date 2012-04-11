@@ -14,16 +14,19 @@ namespace Mosaix
     {
         public Dictionary<string, Texture2D> spriteSheet;
         public Dictionary<uint, Rectangle> tileRect;
-        public uint[,] idMap;
+        public List<uint[,]> layerID;     // idMap[x,y]
         
         // Temporary
         public Map tmxMap;
-        public int winWidth, winHeight;    // Window size
+        public int width, height;
         
         public Canvas(Map mapInput, ContentManager cntMgr)
         {
-            // Note: Currently filepath-based
+            // Note: Currently path-based
             tmxMap = mapInput;
+            
+            width = tmxMap.width;
+            height = tmxMap.height;
             
             // Load spritesheets
             spriteSheet = new Dictionary<string, Texture2D>();
@@ -55,19 +58,40 @@ namespace Mosaix
             }
             
             // Load id maps
-            foreach (var layer in tmxMap.layer)
+            layerID = new List<uint[,]>();
+            foreach (Layer layer in tmxMap.layer)
             {
+                var idMap = new uint[width, height];
+                foreach (LayerTile t in layer.tile)
+                {
+                    idMap[t.x, t.y] = t.gid;
+                }
+                layerID.Add(idMap);
                 
+                // Ignore properties for now
             }
-            
-            // Temporary
-            winWidth = tmxMap.width * tmxMap.tileWidth;
-            winHeight = tmxMap.height * tmxMap.tileHeight;
         }
         
         public void Draw(SpriteBatch batch)
         {
+            //var rect = new Rectangle(0, 0, 100, 100);
+            //batch.Draw (spriteSheet["towntiles"], rect, Color.White);
             
+            // Ignorant method: draw the entire map
+            foreach (var idMap in layerID)
+            {
+                for (var i = 0; i < tmxMap.width; i++)
+                {
+                    for (var j = 0; j < tmxMap.height; j++)
+                    {
+                        if (idMap[i,j] == 0) continue;
+                        var position = new Vector2((float)(tmxMap.tileWidth * i),
+                                                  (float)(tmxMap.tileHeight * j));
+                        batch.Draw(spriteSheet["towntiles"], position,
+                            tileRect[idMap[i,j]], Color.White);
+                    }
+                }
+            }
         }
     }
 }
