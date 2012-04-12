@@ -14,22 +14,27 @@ namespace Mosaix
     {
         public Dictionary<string, Texture2D> spriteSheet;
         public Dictionary<uint, Rectangle> tileRect;
+        public Dictionary<uint, string> idSheet;
         public List<uint[,]> layerID;     // idMap[x,y]
+
+        public int width, height;
         
         // Temporary
         public Map tmxMap;
-        public int width, height;
         
         public Canvas(Map mapInput, ContentManager cntMgr)
         {
-            // Note: Currently path-based
             tmxMap = mapInput;
             
             width = tmxMap.width;
             height = tmxMap.height;
             
             // Load spritesheets
+            // Note: Currently path-based
             spriteSheet = new Dictionary<string, Texture2D>();
+            tileRect = new Dictionary<uint, Rectangle>();
+            idSheet = new Dictionary<uint, string>();
+            
             foreach (Tileset ts in tmxMap.tileset)
             {
                 var tsPath = Path.GetFileNameWithoutExtension(ts.image.source);
@@ -40,7 +45,6 @@ namespace Mosaix
                 var heightCount = ts.image.height / ts.tileHeight;
                 
                 // Pre-compute tileset rectangles
-                tileRect = new Dictionary<uint, Rectangle>();
                 for (var j = 0; j < heightCount; j++)
                 {
                     for (var i = 0; i < widthCount; i++)
@@ -50,6 +54,7 @@ namespace Mosaix
                         var rect = new Rectangle(x, y,
                                                  ts.tileWidth, ts.tileHeight);
                         uint id = ts.firstGid + (uint)(i + j*widthCount);
+                        idSheet.Add(id, ts.Name);
                         tileRect.Add(id, rect);
                     }
                 }
@@ -66,6 +71,7 @@ namespace Mosaix
                 {
                     idMap[t.x, t.y] = t.gid;
                 }
+                
                 layerID.Add(idMap);
                 
                 // Ignore properties for now
@@ -74,24 +80,21 @@ namespace Mosaix
         
         public void Draw(SpriteBatch batch)
         {
-            //var rect = new Rectangle(0, 0, 100, 100);
-            //batch.Draw (spriteSheet["towntiles"], rect, Color.White);
-            
             // Ignorant method: draw the entire map
             foreach (var idMap in layerID)
-            {
                 for (var i = 0; i < tmxMap.width; i++)
-                {
                     for (var j = 0; j < tmxMap.height; j++)
                     {
-                        if (idMap[i,j] == 0) continue;
+                        var id = idMap[i,j];
+                        
+                        // Skip unmapped cells
+                        if (id == 0) continue;
+                        
                         var position = new Vector2((float)(tmxMap.tileWidth * i),
-                                                  (float)(tmxMap.tileHeight * j));
-                        batch.Draw(spriteSheet["towntiles"], position,
-                            tileRect[idMap[i,j]], Color.White);
+                                                (float)(tmxMap.tileHeight * j));
+                        batch.Draw(spriteSheet[idSheet[id]], position,
+                            tileRect[id], Color.White);
                     }
-                }
-            }
-        }
+        }   // end Draw
     }
 }
