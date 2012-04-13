@@ -15,7 +15,7 @@ namespace Mosaix
         public Dictionary<string, Texture2D> spriteSheet;
         public Dictionary<uint, Rectangle> tileRect;
         public Dictionary<uint, string> idSheet;
-        public List<uint[,]> layerID;     // idMap[x,y]
+        public List<uint[,]> layerID;     // layerID[x,y]
 
         public int width, height;
         
@@ -90,8 +90,9 @@ namespace Mosaix
                         // Skip unmapped cells
                         if (id == 0) continue;
                         
-                        var position = new Vector2((float)(tmxMap.tileWidth * i),
-                                                (float)(tmxMap.tileHeight * j));
+                        var position = new Vector2(
+                                            (float)(tmxMap.tileWidth * i),
+                                            (float)(tmxMap.tileHeight * j));
                         batch.Draw(spriteSheet[idSheet[id]], position,
                             tileRect[id], Color.White);
                     }
