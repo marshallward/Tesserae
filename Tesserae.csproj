@@ -7,8 +7,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{30777E62-15EC-4362-ADBB-8A8DE93FF10D}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Mosaix</RootNamespace>
-    <AssemblyName>Mosaix</AssemblyName>
+    <RootNamespace>Tesserae</RootNamespace>
+    <AssemblyName>Tesserae</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,7 +38,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="src\AssemblyInfo.cs" />
-    <Compile Include="src\Mosaix.cs" />
+    <Compile Include="src\Tesserae.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TiledSharp\TiledSharp.csproj">

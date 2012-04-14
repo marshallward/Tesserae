@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TiledSharp;
 
-namespace Mosaix
+namespace Tesserae
 {
     public class Canvas
     {

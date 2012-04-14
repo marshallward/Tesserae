@@ -4,12 +4,12 @@ using System.Runtime.CompilerServices;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle("Mosaix")]
+[assembly: AssemblyTitle("Tesserae")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("marshall")]
+[assembly: AssemblyCopyright("Marshall Ward")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
