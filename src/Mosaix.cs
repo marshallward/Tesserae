@@ -97,5 +97,41 @@ namespace Mosaix
                             tileRect[id], Color.White);
                     }
         }   // end Draw
+    } // End Canvas
+    
+    
+    public class Viewport
+    {
+        // User-defined (or derived) quantities
+        public int tWidth;      // # of (full) tiles per width
+        public int tHeight;     // # of (full) tiles per height
+        public int tHalo;       // # of rendered tiles outside viewport
+        
+        // Window-defined properties
+        public int pWidth;          // Viewport width in pixels
+        public int pHeight;         // Viewport height in pixels
+        public float aspectRatio;   // Viewport width-to-height ratio
+        
+        public Viewport(Game game)
+        {
+            pWidth = game.GraphicsDevice.Viewport.Bounds.Width;
+            pHeight = game.GraphicsDevice.Viewport.Bounds.Height;
+            aspectRatio = (double)pWidth / (double)pHeight;
+            
+            game.Window.ClientSizeChanged += new EventHandler<EventArgs>
+                (Window_ClientSizeChanged);
+        }
+        
+        public void UpdateViewport(GraphicsDevice gDevice)
+        {
+            pWidth = game.GraphicsDevice.Viewport.Bounds.Width;
+            pHeight = game.GraphicsDevice.Viewport.Bounds.Height;
+            aspectRatio = (float)pWidth / (float)pHeight;
+        }
+        
+        void Window_ClientSizeChanged(object sender, EventArgs e)
+        {
+            UpdateViewport();
+        }
     }
 }
