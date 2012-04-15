@@ -10,7 +10,7 @@ using TiledSharp;
 
 namespace Tesserae
 {
-    public class Canvas
+    public class Mosaic : DrawableGameComponent
     {
         public Dictionary<string, Texture2D> spriteSheet;
         public Dictionary<uint, Rectangle> tileRect;
@@ -22,7 +22,7 @@ namespace Tesserae
         // Temporary
         public Map tmxMap;
         
-        public Canvas(Map mapInput, ContentManager cntMgr)
+        public Mosaic(Map mapInput, ContentManager cntMgr)
         {
             tmxMap = mapInput;
             
@@ -41,6 +41,7 @@ namespace Tesserae
                 spriteSheet.Add(ts.Name, cntMgr.Load<Texture2D>(tsPath));
                 
                 // Loop hoisting
+                // (Warning: Currently doesn't respect spacing/margins)
                 var widthCount = ts.image.width / ts.tileWidth;
                 var heightCount = ts.image.height / ts.tileHeight;
                 
@@ -100,7 +101,9 @@ namespace Tesserae
     } // End Canvas
     
     
-    public class Viewport
+    // Don't worry about updating this information at the moment, just focus on
+    // integrating its data with Draw
+    public class Canvas
     {
         // User-defined (or derived) quantities
         public int tWidth;      // # of (full) tiles per width
@@ -110,9 +113,9 @@ namespace Tesserae
         // Window-defined properties
         public int pWidth;          // Viewport width in pixels
         public int pHeight;         // Viewport height in pixels
-        public float aspectRatio;   // Viewport width-to-height ratio
+        public double aspectRatio;  // Viewport width-to-height ratio
         
-        public Viewport(Game game)
+        public Canvas(Game game)
         {
             pWidth = game.GraphicsDevice.Viewport.Bounds.Width;
             pHeight = game.GraphicsDevice.Viewport.Bounds.Height;
@@ -122,7 +125,7 @@ namespace Tesserae
                 (Window_ClientSizeChanged);
         }
         
-        public void UpdateViewport(GraphicsDevice gDevice)
+        public void UpdateViewport(Game game)
         {
             pWidth = game.GraphicsDevice.Viewport.Bounds.Width;
             pHeight = game.GraphicsDevice.Viewport.Bounds.Height;
@@ -131,7 +134,7 @@ namespace Tesserae
         
         void Window_ClientSizeChanged(object sender, EventArgs e)
         {
-            UpdateViewport();
+            //UpdateViewport(window);
         }
     }
 }
