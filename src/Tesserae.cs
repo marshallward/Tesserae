@@ -10,6 +10,7 @@ using TiledSharp;
 
 namespace Tesserae
 {
+    // 
     public class Mosaic : DrawableGameComponent
     {
         public Dictionary<string, Texture2D> spriteSheet;
@@ -22,9 +23,11 @@ namespace Tesserae
         // Temporary
         public Map tmxMap;
         
-        public Mosaic(Map mapInput, ContentManager cntMgr)
+        public Mosaic(Game game, string mapName) : base(game)
         {
-            tmxMap = mapInput;
+            // Temporary code
+            tmxMap = new Map(mapName);
+            var cntMgr = game.Content;
             
             width = tmxMap.width;
             height = tmxMap.height;
@@ -41,9 +44,10 @@ namespace Tesserae
                 spriteSheet.Add(ts.Name, cntMgr.Load<Texture2D>(tsPath));
                 
                 // Loop hoisting
-                // (Warning: Currently doesn't respect spacing/margins)
-                var widthCount = ts.image.width / ts.tileWidth;
-                var heightCount = ts.image.height / ts.tileHeight;
+                var widthCount = (ts.image.width - 2*ts.spacing)
+                                    / (ts.tileWidth + ts.margin);
+                var heightCount = (ts.image.height - 2*ts.spacing)
+                                    / (ts.tileHeight + ts.margin);
                 
                 // Pre-compute tileset rectangles
                 for (var j = 0; j < heightCount; j++)
