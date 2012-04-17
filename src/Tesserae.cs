@@ -53,16 +53,13 @@ namespace Tesserae
                 var h_end = ts.image.height;
                 
                 // Pre-compute tileset rectangles
-                Console.WriteLine ("first GID: {0}", ts.firstGid);
                 var id = ts.firstGid;
                 for (var h = h_start; h < h_end; h += h_inc)
                 {
                     for (var w = w_start; w < w_end; w += w_inc)
                     {
-                        Console.WriteLine("w, h: {0}, {1}", w, h);
                         var rect = new Rectangle(w, h,
                                                  ts.tileWidth, ts.tileHeight);
-                        Console.WriteLine("Id: {0}", id);
                         idSheet.Add(id, ts.Name);
                         tileRect.Add(id, rect);
                         id += 1;
