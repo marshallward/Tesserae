@@ -11,7 +11,6 @@ using TiledSharp;
 
 namespace Tesserae
 {
-    // 
     public class Mosaic : DrawableGameComponent
     {
         public Dictionary<string, Texture2D> spriteSheet;
