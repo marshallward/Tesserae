@@ -27,7 +27,6 @@ namespace Tesserae
         {
             // Temporary code
             tmxMap = new Map(mapName);
-            
             width = tmxMap.width;
             height = tmxMap.height;
             
@@ -129,9 +128,6 @@ namespace Tesserae
             return newSheet;
         }
     }
-    
-    
-    
     
     // Don't worry about updating this information at the moment, just focus on
     // integrating its data with Draw
