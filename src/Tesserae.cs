@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Xml.Linq;
 
 using Microsoft.Xna.Framework;
@@ -27,7 +28,6 @@ namespace Tesserae
         {
             // Temporary code
             tmxMap = new Map(mapName);
-            var cntMgr = game.Content;
             
             width = tmxMap.width;
             height = tmxMap.height;
@@ -40,27 +40,32 @@ namespace Tesserae
             
             foreach (Tileset ts in tmxMap.tileset)
             {
-                var tsPath = Path.GetFileNameWithoutExtension(ts.image.source);
-                spriteSheet.Add(ts.Name, cntMgr.Load<Texture2D>(tsPath));
+                var newSheet = GetSpriteSheet(ts.image.source);
+                spriteSheet.Add(ts.Name, newSheet);
                 
                 // Loop hoisting
-                var widthCount = (ts.image.width - 2*ts.margin)
-                                    / (ts.tileWidth + ts.spacing);
-                var heightCount = (ts.image.height - 2*ts.margin)
-                                    / (ts.tileHeight + ts.spacing);
+                var w_start = ts.margin;
+                var w_inc = ts.tileWidth + ts.spacing;
+                var w_end = ts.image.width;
+                
+                var h_start = ts.margin;
+                var h_inc = ts.tileHeight + ts.spacing;
+                var h_end = ts.image.height;
                 
                 // Pre-compute tileset rectangles
-                for (var j = 0; j < heightCount; j++)
+                Console.WriteLine ("first GID: {0}", ts.firstGid);
+                var id = ts.firstGid;
+                for (var h = h_start; h < h_end; h += h_inc)
                 {
-                    for (var i = 0; i < widthCount; i++)
+                    for (var w = w_start; w < w_end; w += w_inc)
                     {
-                        var x = ts.margin + i*(ts.tileWidth + ts.spacing);
-                        var y = ts.margin + j*(ts.tileHeight + ts.spacing);
-                        var rect = new Rectangle(x, y,
+                        Console.WriteLine("w, h: {0}, {1}", w, h);
+                        var rect = new Rectangle(w, h,
                                                  ts.tileWidth, ts.tileHeight);
-                        uint id = ts.firstGid + (uint)(i + j*widthCount);
+                        Console.WriteLine("Id: {0}", id);
                         idSheet.Add(id, ts.Name);
                         tileRect.Add(id, rect);
+                        id += 1;
                     }
                 }
                 
@@ -87,7 +92,9 @@ namespace Tesserae
         {
             // Ignorant method: draw the entire map
             foreach (var idMap in layerID)
+            {
                 for (var i = 0; i < tmxMap.width; i++)
+                {
                     for (var j = 0; j < tmxMap.height; j++)
                     {
                         var id = idMap[i,j];
@@ -101,8 +108,33 @@ namespace Tesserae
                         batch.Draw(spriteSheet[idSheet[id]], position,
                             tileRect[id], Color.White);
                     }
-        }   // end Draw
-    } // End Canvas
+                }
+            }
+        }
+        
+        public Texture2D GetSpriteSheet(string filepath)
+        {
+            Texture2D newSheet;
+            
+            var asm = Assembly.GetEntryAssembly();
+            var manifest = asm.GetManifestResourceNames();
+            
+            var fileResPath = filepath.Replace(
+                Path.DirectorySeparatorChar.ToString(), ".");
+            var fileRes = Array.Find(manifest, s => s.EndsWith(fileResPath));
+            if (fileRes != null)
+            {
+                Stream imgStream = asm.GetManifestResourceStream(fileRes);
+                newSheet = Texture2D.FromFile(this.GraphicsDevice, imgStream);
+            }
+            else
+                newSheet = Texture2D.FromFile(this.GraphicsDevice, filepath);
+            
+            return newSheet;
+        }
+    }
+    
+    
     
     
     // Don't worry about updating this information at the moment, just focus on
