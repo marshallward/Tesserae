@@ -44,18 +44,18 @@ namespace Tesserae
                 spriteSheet.Add(ts.Name, cntMgr.Load<Texture2D>(tsPath));
                 
                 // Loop hoisting
-                var widthCount = (ts.image.width - 2*ts.spacing)
-                                    / (ts.tileWidth + ts.margin);
-                var heightCount = (ts.image.height - 2*ts.spacing)
-                                    / (ts.tileHeight + ts.margin);
+                var widthCount = (ts.image.width - 2*ts.margin)
+                                    / (ts.tileWidth + ts.spacing);
+                var heightCount = (ts.image.height - 2*ts.margin)
+                                    / (ts.tileHeight + ts.spacing);
                 
                 // Pre-compute tileset rectangles
                 for (var j = 0; j < heightCount; j++)
                 {
                     for (var i = 0; i < widthCount; i++)
                     {
-                        var x = ts.spacing + i*(ts.tileWidth + ts.margin);
-                        var y = ts.spacing + j*(ts.tileHeight + ts.margin);
+                        var x = ts.margin + i*(ts.tileWidth + ts.spacing);
+                        var y = ts.margin + j*(ts.tileHeight + ts.spacing);
                         var rect = new Rectangle(x, y,
                                                  ts.tileWidth, ts.tileHeight);
                         uint id = ts.firstGid + (uint)(i + j*widthCount);
