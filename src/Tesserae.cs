@@ -21,7 +21,9 @@ namespace Tesserae
         public int width, height;
         
         // Temporary
-        public Map tmxMap;
+        public Map tmxMap;      // TMX data (try to remove this)
+        public Canvas canvas;   // Viewport details
+        public Tile tile;       // Tile element details
         
         public Mosaic(Game game, string mapName) : base(game)
         {
@@ -29,6 +31,10 @@ namespace Tesserae
             tmxMap = new Map(mapName);
             width = tmxMap.width;
             height = tmxMap.height;
+            
+            // Temporary code
+            canvas = new Canvas(game);
+            canvas.tHeight = 15;
             
             // Load spritesheets
             // Note: Currently path-based
@@ -98,10 +104,11 @@ namespace Tesserae
                         if (id == 0) continue;
                         
                         var position = new Vector2(
-                                            (float)(tmxMap.tileWidth * i),
-                                            (float)(tmxMap.tileHeight * j));
+                                    tmxMap.tileWidth * canvas.tileScale * i,
+                                    tmxMap.tileHeight * canvas.tileScale * j);
                         batch.Draw(spriteSheet[idSheet[id]], position,
-                            tileRect[id], Color.White);
+                            tileRect[id], Color.White, 0.0f, Vector2.Zero,
+                            canvas.tileScale, SpriteEffects.None, 0);
                     }
                 }
             }
@@ -129,8 +136,7 @@ namespace Tesserae
         }
     }
     
-    // Don't worry about updating this information at the moment, just focus on
-    // integrating its data with Draw
+    
     public class Canvas
     {
         // User-defined (or derived) quantities
@@ -141,10 +147,11 @@ namespace Tesserae
         // Window-defined properties
         public int pWidth;          // Viewport width in pixels
         public int pHeight;         // Viewport height in pixels
-        public double aspectRatio;  // Viewport width-to-height ratio
+        public float aspectRatio;  // Viewport width-to-height ratio
         
         // Necessary?
         Game game;
+        public float tileScale = 3.0f;
         
         public Canvas(Game inGame)
         {
@@ -152,7 +159,10 @@ namespace Tesserae
             
             pWidth = game.GraphicsDevice.Viewport.Bounds.Width;
             pHeight = game.GraphicsDevice.Viewport.Bounds.Height;
-            aspectRatio = (double)pWidth / (double)pHeight;
+            aspectRatio = (float)pWidth / (float)pHeight;
+   
+            // Temp
+            tileScale = 3.0f;
             
             game.Window.ClientSizeChanged += new EventHandler<EventArgs>
                 (UpdateViewport);
@@ -164,10 +174,19 @@ namespace Tesserae
             pHeight = game.GraphicsDevice.Viewport.Bounds.Height;
             aspectRatio = (float)pWidth / (float)pHeight;
             
+            tileScale = (float)pHeight / (float)(tHeight * 15);
+            
             // Testing
             Console.WriteLine("Pixel Width: {0}", pWidth);
             Console.WriteLine("Pixel Height: {0}", pHeight);
             Console.WriteLine("Aspect Ratio: {0}", aspectRatio);
         }
+    }
+    
+    
+    public class Tile
+    {
+        public int pWidth;      // Tile width in pixels
+        public int pHeight;     // Tile height in pixels
     }
 }
