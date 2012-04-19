@@ -143,26 +143,31 @@ namespace Tesserae
         public int pHeight;         // Viewport height in pixels
         public double aspectRatio;  // Viewport width-to-height ratio
         
-        public Canvas(Game game)
+        // Necessary?
+        Game game;
+        
+        public Canvas(Game inGame)
         {
+            game = inGame;
+            
             pWidth = game.GraphicsDevice.Viewport.Bounds.Width;
             pHeight = game.GraphicsDevice.Viewport.Bounds.Height;
             aspectRatio = (double)pWidth / (double)pHeight;
             
             game.Window.ClientSizeChanged += new EventHandler<EventArgs>
-                (Window_ClientSizeChanged);
+                (UpdateViewport);
         }
         
-        public void UpdateViewport(Game game)
+        public void UpdateViewport(object sender, EventArgs e)
         {
             pWidth = game.GraphicsDevice.Viewport.Bounds.Width;
             pHeight = game.GraphicsDevice.Viewport.Bounds.Height;
             aspectRatio = (float)pWidth / (float)pHeight;
-        }
-        
-        void Window_ClientSizeChanged(object sender, EventArgs e)
-        {
-            //UpdateViewport(window);
+            
+            // Testing
+            Console.WriteLine("Pixel Width: {0}", pWidth);
+            Console.WriteLine("Pixel Height: {0}", pHeight);
+            Console.WriteLine("Aspect Ratio: {0}", aspectRatio);
         }
     }
 }
