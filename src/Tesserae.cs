@@ -13,24 +13,24 @@ namespace Tesserae
 {
     public class Mosaic : DrawableGameComponent
     {
-        public Dictionary<string, Texture2D> spriteSheet;
+        public Dictionary<TmxTileset, Texture2D> spriteSheet;
         public Dictionary<uint, Rectangle> tileRect;
-        public Dictionary<uint, string> idSheet;
+        public Dictionary<uint, TmxTileset> idSheet;
         public List<uint[,]> layerID;     // layerID[x,y]
-
-        public int width, height;
+        
+        public int tWidth, tHeight;
         
         // Temporary
-        public Map tmxMap;      // TMX data (try to remove this)
+        public TmxMap map;      // TMX data (try to remove this)
         public Canvas canvas;   // Viewport details
         public Tile tile;       // Tile element details
         
         public Mosaic(Game game, string mapName) : base(game)
         {
             // Temporary code
-            tmxMap = new Map(mapName);
-            width = tmxMap.width;
-            height = tmxMap.height;
+            map = new TmxMap(mapName);
+            tWidth = map.Width;
+            tHeight = map.Height;
             
             // Temporary code
             canvas = new Canvas(game);
@@ -38,33 +38,33 @@ namespace Tesserae
             
             // Load spritesheets
             // Note: Currently path-based
-            spriteSheet = new Dictionary<string, Texture2D>();
+            spriteSheet = new Dictionary<TmxTileset, Texture2D>();
             tileRect = new Dictionary<uint, Rectangle>();
-            idSheet = new Dictionary<uint, string>();
+            idSheet = new Dictionary<uint, TmxTileset>();
             
-            foreach (Tileset ts in tmxMap.tileset)
+            foreach (TmxTileset ts in map.Tileset)
             {
-                var newSheet = GetSpriteSheet(ts.image.source);
-                spriteSheet.Add(ts.Name, newSheet);
+                var newSheet = GetSpriteSheet(ts.Image.Source);
+                spriteSheet.Add(ts, newSheet);
                 
                 // Loop hoisting
-                var w_start = ts.margin;
-                var w_inc = ts.tileWidth + ts.spacing;
-                var w_end = ts.image.width;
+                var wStart = ts.Margin;
+                var wInc = ts.TileWidth + ts.Spacing;
+                var wEnd = ts.Image.Width;
                 
-                var h_start = ts.margin;
-                var h_inc = ts.tileHeight + ts.spacing;
-                var h_end = ts.image.height;
+                var hStart = ts.Margin;
+                var hInc = ts.TileHeight + ts.Spacing;
+                var hEnd = ts.Image.Height;
                 
                 // Pre-compute tileset rectangles
-                var id = ts.firstGid;
-                for (var h = h_start; h < h_end; h += h_inc)
+                var id = ts.FirstGid;
+                for (var h = hStart; h < hEnd; h += hInc)
                 {
-                    for (var w = w_start; w < w_end; w += w_inc)
+                    for (var w = wStart; w < wEnd; w += wInc)
                     {
                         var rect = new Rectangle(w, h,
-                                                 ts.tileWidth, ts.tileHeight);
-                        idSheet.Add(id, ts.Name);
+                                                 ts.TileWidth, ts.TileHeight);
+                        idSheet.Add(id, ts);
                         tileRect.Add(id, rect);
                         id += 1;
                     }
@@ -75,12 +75,12 @@ namespace Tesserae
             
             // Load id maps
             layerID = new List<uint[,]>();
-            foreach (Layer layer in tmxMap.layer)
+            foreach (TmxLayer layer in map.Layer)
             {
-                var idMap = new uint[width, height];
-                foreach (LayerTile t in layer.tile)
+                var idMap = new uint[tWidth, tHeight];
+                foreach (TmxLayerTile t in layer.Tile)
                 {
-                    idMap[t.x, t.y] = t.gid;
+                    idMap[t.X, t.Y] = t.GID;
                 }
                 
                 layerID.Add(idMap);
@@ -94,18 +94,21 @@ namespace Tesserae
             // Ignorant method: draw the entire map
             foreach (var idMap in layerID)
             {
-                for (var i = 0; i < tmxMap.width; i++)
+                for (var i = 0; i < map.Width; i++)
                 {
-                    for (var j = 0; j < tmxMap.height; j++)
+                    for (var j = 0; j < map.Height; j++)
                     {
                         var id = idMap[i,j];
                         
                         // Skip unmapped cells
                         if (id == 0) continue;
                         
+                        // Precompute these?
+                        // (Won't work unless done for all 256 sub-tile pixels)
                         var position = new Vector2(
-                                    tmxMap.tileWidth * canvas.tileScale * i,
-                                    tmxMap.tileHeight * canvas.tileScale * j);
+                                    map.TileWidth * canvas.tileScale * i,
+                                    map.TileHeight * canvas.tileScale * j);
+                        
                         batch.Draw(spriteSheet[idSheet[id]], position,
                             tileRect[id], Color.White, 0.0f, Vector2.Zero,
                             canvas.tileScale, SpriteEffects.None, 0);
@@ -114,6 +117,7 @@ namespace Tesserae
             }
         }
         
+        // This routine nearly duplicate TiledSharp's ReadXML. Sharing options?
         public Texture2D GetSpriteSheet(string filepath)
         {
             Texture2D newSheet;
@@ -151,7 +155,7 @@ namespace Tesserae
         
         // Necessary?
         Game game;
-        public float tileScale = 3.0f;
+        public float tileScale;
         
         public Canvas(Game inGame)
         {
@@ -160,7 +164,7 @@ namespace Tesserae
             pWidth = game.GraphicsDevice.Viewport.Bounds.Width;
             pHeight = game.GraphicsDevice.Viewport.Bounds.Height;
             aspectRatio = (float)pWidth / (float)pHeight;
-   
+            
             // Temp
             tileScale = 3.0f;
             
@@ -174,7 +178,7 @@ namespace Tesserae
             pHeight = game.GraphicsDevice.Viewport.Bounds.Height;
             aspectRatio = (float)pWidth / (float)pHeight;
             
-            tileScale = (float)pHeight / (float)(tHeight * 15);
+            tileScale = (float)pHeight / (float)(tHeight * 16);
             
             // Testing
             Console.WriteLine("Pixel Width: {0}", pWidth);
