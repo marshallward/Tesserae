@@ -42,7 +42,7 @@ namespace Tesserae
             tileRect = new Dictionary<uint, Rectangle>();
             idSheet = new Dictionary<uint, TmxTileset>();
             
-            foreach (TmxTileset ts in map.Tileset)
+            foreach (TmxTileset ts in map.Tilesets)
             {
                 var newSheet = GetSpriteSheet(ts.Image.Source);
                 spriteSheet.Add(ts, newSheet);
@@ -75,10 +75,10 @@ namespace Tesserae
             
             // Load id maps
             layerID = new List<uint[,]>();
-            foreach (TmxLayer layer in map.Layer)
+            foreach (TmxLayer layer in map.Layers)
             {
                 var idMap = new uint[tWidth, tHeight];
-                foreach (TmxLayerTile t in layer.Tile)
+                foreach (TmxLayerTile t in layer.Tiles)
                 {
                     idMap[t.X, t.Y] = t.GID;
                 }
