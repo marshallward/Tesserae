@@ -6,18 +6,9 @@ __Not yet recommended for public use!!__
 
 Description
 -----------
-Tesserae is a wrapper from TiledSharp to XNA which loads contents into the XNA
-content manager and provides subroutines for drawing tile maps.
+Tesserae is an XNA library which renders tiled maps imported from TiledSharp.
 
-At the moment, it is not anything particuarly special.
-
-
-Design goals
-------------
-- Translate TiledSharp objects into more optimised data formats.
-- Pre-render any bounding rectangles (done)
-- Only render tiles within window
-- Repeating tiles as single Draw()?
+Currently this is only a prototype.
 
 Contact
 -------

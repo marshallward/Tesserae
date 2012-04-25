@@ -23,7 +23,6 @@ namespace Tesserae
         // Temporary
         public TmxMap map;      // TMX data (try to remove this)
         public Canvas canvas;   // Viewport details
-        public Tile tile;       // Tile element details
         
         public Mosaic(Game game, string mapName) : base(game)
         {
@@ -34,7 +33,6 @@ namespace Tesserae
             
             // Temporary code
             canvas = new Canvas(game);
-            canvas.tHeight = 15;
             
             // Load spritesheets
             spriteSheet = new Dictionary<TmxTileset, Texture2D>();
@@ -90,13 +88,17 @@ namespace Tesserae
         public void Draw(SpriteBatch batch)
         {
             // Loop hoisting (Determined from Canvas)
-            var iStart = 0;
-            var iEnd = map.Width;
+            var iStart = Math.Max(0, canvas.tX - canvas.tWidth / 2 + 1);
+            var iEnd = Math.Min(canvas.tX + canvas.tWidth / 2 + 1, this.tWidth);
             
-            var jStart = 0;
-            var jEnd = map.Height;
+            Console.WriteLine("tX, tWidth: {0}, {1}", canvas.tX, canvas.tWidth);
             
-            // Ignorant method: draw the entire map
+            var jStart = Math.Max(0, canvas.tY - canvas.tHeight / 2 + 1);
+            var jEnd = Math.Min(canvas.tY + canvas.tHeight / 2 + 1, this.tHeight);
+            
+            Console.WriteLine("i: {0}..{1}", iStart, iEnd);
+            Console.WriteLine("j: {0}..{1}", jStart, jEnd);
+            // Draw tiles inside canvas
             foreach (var idMap in layerID)
             {
                 for (var i = iStart; i < iEnd; i++)
@@ -120,7 +122,6 @@ namespace Tesserae
             }
         }
         
-        // This routine nearly duplicates TiledSharp's ReadXML (merge?)
         public Texture2D GetSpriteSheet(string filepath)
         {
             Texture2D newSheet;
@@ -141,12 +142,5 @@ namespace Tesserae
             
             return newSheet;
         }
-    }
-    
-    
-    public class Tile
-    {
-        public int pWidth;      // Tile width in pixels
-        public int pHeight;     // Tile height in pixels
     }
 }
