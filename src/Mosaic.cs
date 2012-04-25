@@ -37,7 +37,6 @@ namespace Tesserae
             canvas.tHeight = 15;
             
             // Load spritesheets
-            // Note: Currently path-based
             spriteSheet = new Dictionary<TmxTileset, Texture2D>();
             tileRect = new Dictionary<uint, Rectangle>();
             idSheet = new Dictionary<uint, TmxTileset>();
@@ -82,7 +81,6 @@ namespace Tesserae
                 {
                     idMap[t.X, t.Y] = t.GID;
                 }
-                
                 layerID.Add(idMap);
                 
                 // Ignore properties for now
@@ -91,33 +89,38 @@ namespace Tesserae
         
         public void Draw(SpriteBatch batch)
         {
+            // Loop hoisting (Determined from Canvas)
+            var iStart = 0;
+            var iEnd = map.Width;
+            
+            var jStart = 0;
+            var jEnd = map.Height;
+            
             // Ignorant method: draw the entire map
             foreach (var idMap in layerID)
             {
-                for (var i = 0; i < map.Width; i++)
+                for (var i = iStart; i < iEnd; i++)
                 {
-                    for (var j = 0; j < map.Height; j++)
+                    for (var j = jStart; j < jEnd; j++)
                     {
                         var id = idMap[i,j];
                         
                         // Skip unmapped cells
                         if (id == 0) continue;
                         
-                        // Precompute these?
-                        // (Won't work unless done for all 256 sub-tile pixels)
                         var position = new Vector2(
-                                    map.TileWidth * canvas.tileScale * i,
-                                    map.TileHeight * canvas.tileScale * j);
+                                        map.TileWidth * canvas.tileScale * i,
+                                        map.TileHeight * canvas.tileScale * j);
                         
                         batch.Draw(spriteSheet[idSheet[id]], position,
-                            tileRect[id], Color.White, 0.0f, Vector2.Zero,
-                            canvas.tileScale, SpriteEffects.None, 0);
+                                tileRect[id], Color.White, 0.0f, Vector2.Zero,
+                                canvas.tileScale, SpriteEffects.None, 0);
                     }
                 }
             }
         }
         
-        // This routine nearly duplicate TiledSharp's ReadXML. Sharing options?
+        // This routine nearly duplicates TiledSharp's ReadXML (merge?)
         public Texture2D GetSpriteSheet(string filepath)
         {
             Texture2D newSheet;
@@ -126,7 +129,7 @@ namespace Tesserae
             var manifest = asm.GetManifestResourceNames();
             
             var fileResPath = filepath.Replace(
-                Path.DirectorySeparatorChar.ToString(), ".");
+                                Path.DirectorySeparatorChar.ToString(), ".");
             var fileRes = Array.Find(manifest, s => s.EndsWith(fileResPath));
             if (fileRes != null)
             {
@@ -137,53 +140,6 @@ namespace Tesserae
                 newSheet = Texture2D.FromFile(this.GraphicsDevice, filepath);
             
             return newSheet;
-        }
-    }
-    
-    
-    public class Canvas
-    {
-        // User-defined (or derived) quantities
-        public int tWidth;      // # of (full) tiles per width
-        public int tHeight;     // # of (full) tiles per height
-        public int tHalo;       // # of rendered tiles outside viewport
-        
-        // Window-defined properties
-        public int pWidth;          // Viewport width in pixels
-        public int pHeight;         // Viewport height in pixels
-        public float aspectRatio;  // Viewport width-to-height ratio
-        
-        // Necessary?
-        Game game;
-        public float tileScale;
-        
-        public Canvas(Game inGame)
-        {
-            game = inGame;
-            
-            pWidth = game.GraphicsDevice.Viewport.Bounds.Width;
-            pHeight = game.GraphicsDevice.Viewport.Bounds.Height;
-            aspectRatio = (float)pWidth / (float)pHeight;
-            
-            // Temp
-            tileScale = 3.0f;
-            
-            game.Window.ClientSizeChanged += new EventHandler<EventArgs>
-                (UpdateViewport);
-        }
-        
-        public void UpdateViewport(object sender, EventArgs e)
-        {
-            pWidth = game.GraphicsDevice.Viewport.Bounds.Width;
-            pHeight = game.GraphicsDevice.Viewport.Bounds.Height;
-            aspectRatio = (float)pWidth / (float)pHeight;
-            
-            tileScale = (float)pHeight / (float)(tHeight * 16);
-            
-            // Testing
-            Console.WriteLine("Pixel Width: {0}", pWidth);
-            Console.WriteLine("Pixel Height: {0}", pHeight);
-            Console.WriteLine("Aspect Ratio: {0}", aspectRatio);
         }
     }
     
