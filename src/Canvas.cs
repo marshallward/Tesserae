@@ -11,12 +11,20 @@ using TiledSharp;
 
 namespace Tesserae
 {
+
+    // Canvas tracks three coordinate systems: 
+    // 1. pScreenWidth/Height: The window pixel count
+    // 2. pWidth/Height: The unscaled (virtual) pixel count
+    // 3. tWidth/Height: The (full) tile count        
     public class Canvas
     {
         // Window-defined properties
-        public int pWidth;          // Viewport width in pixels
-        public int pHeight;         // Viewport height in pixels
-        public float aspectRatio;   // Viewport width-to-height ratio
+        public int pScreenWidth;          // Viewport width in pixels
+        public int pScreenHeight;         // Viewport height in pixels
+        
+        // Unscaled window pixel size
+        public int pWidth;
+        public int pHeight;
         
         // User-defined (or derived) quantities
         public int tWidth;      // # of (full) tiles per width
@@ -28,12 +36,6 @@ namespace Tesserae
         public int pY;      // Camera Y position in pixels
         public int tX;      // Tile.X containing camera
         public int tY;      // Tile.Y containing camera
-        
-        // Loop index bounds
-        public int tXStart;
-        public int tXEnd;
-        public int tYStart;
-        public int tYEnd;
         
         // Mosaic parameters
         public int pTileWidth;      // Tile width in pixels
@@ -48,34 +50,30 @@ namespace Tesserae
         {
             game = gameInput;
             
-            pWidth = game.GraphicsDevice.Viewport.Bounds.Width;
-            pHeight = game.GraphicsDevice.Viewport.Bounds.Height;
-            aspectRatio = (float)pWidth / (float)pHeight;
-            
-            // Testing
+            // Testing (Input arguments?)
             pTileWidth = pTileHeight = 16;
-            tHeight = 16;
+            tHeight = 15;
             
-            Console.WriteLine("pWidth, pTileWidth, tileScale: {0}, {1}, {2}", pWidth, pTileWidth, tileScale);
+            // Screen pixel count
+            pScreenWidth = game.GraphicsDevice.Viewport.Bounds.Width;
+            pScreenHeight = game.GraphicsDevice.Viewport.Bounds.Height;            
             
             // Determine other tilecounts based on viewport pixel size
-            tileScale = (float)pHeight / (float)(pTileHeight * tHeight);
-            tWidth = (int)Math.Round(pWidth / (pTileWidth * tileScale));
-
-            // Initialize camera
-            tX = tWidth / 2;
-            tY = tHeight / 2;
-            pX = tX * pTileWidth;
-            pY = tY * pTileHeight;
+            tileScale = (float)pScreenHeight / (float)(pTileHeight * tHeight);
+            tWidth = (int)Math.Round(pScreenWidth / (pTileWidth * tileScale));
             
-            // Loop index bounds
-            tXStart = tX - tWidth / 2 + 1;
-            tXEnd = tX + tWidth / 2 + 1;
+            // Virtual height is prescribed (i.e. window-independent)
+            pHeight = pTileHeight * tHeight;
+            pWidth = (int)Math.Round(pScreenWidth / tileScale);
             
-            // Junk
-            camera = new Vector2((float)pX * tileScale, (float)pY * tileScale);
-            
+            // Initialize camera on center or left/below centre pixel
+            pX = (pWidth - 1) / 2;
+            pY = (pHeight - 1) / 2;
+            tX = pX / pTileWidth;
+            tY = pY / pTileHeight;
             Console.WriteLine("tX, tWidth: {0}, {1}", tX, tWidth);
+            
+            camera = tileScale * (new Vector2((float)pX, (float)pY));
             
             game.Window.ClientSizeChanged += new EventHandler<EventArgs>
                 (UpdateViewport);
@@ -85,16 +83,29 @@ namespace Tesserae
         {
             // Disable this event?
             
-            pWidth = game.GraphicsDevice.Viewport.Bounds.Width;
-            pHeight = game.GraphicsDevice.Viewport.Bounds.Height;
-            aspectRatio = (float)pWidth / (float)pHeight;
+            // Screen pixel count
+            pScreenWidth = game.GraphicsDevice.Viewport.Bounds.Width;
+            pScreenHeight = game.GraphicsDevice.Viewport.Bounds.Height;
             
-            tileScale = (float)pHeight / (float)(tHeight * 16);
+            // Determine other tilecounts based on viewport pixel size
+            tileScale = (float)pScreenHeight / (float)(pTileHeight * tHeight);
+            tWidth = (int)Math.Round(pScreenWidth / (pTileWidth * tileScale));
+            
+            pWidth = (int)Math.Round(pScreenWidth / tileScale);
+            pHeight = (int)Math.Round(pScreenHeight / tileScale);
+            
+            // Initialize camera
+            pX = (pWidth - 1) / 2;
+            pY = (pHeight - 1) / 2;
+            tX = pX / pTileWidth;
+            tY = pY / pTileHeight;
+            
+            // Junk
+            camera = new Vector2((float)pX * tileScale, (float)pY * tileScale);
             
             // Testing
-            Console.WriteLine(" Pixel Width: {0}", pWidth);
-            Console.WriteLine("Pixel Height: {0}", pHeight);
-            Console.WriteLine("Aspect Ratio: {0}", aspectRatio);
+            Console.WriteLine(" Pixel Width: {0}", pScreenWidth);
+            Console.WriteLine("Pixel Height: {0}", pScreenHeight);
             
             // Re-enable this event?
         }
