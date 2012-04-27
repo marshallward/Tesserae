@@ -16,23 +16,31 @@ namespace Tesserae
     // 2. tWidth/Height: Canvas tile count
     public class Canvas
     {
-        // Virtual window pixel size
+        // User-defined (or derived) fields
+        public int tMinWidth;
+        public int tMinHeight;
+        
+        // Canvas size
         public int pWidth;          // Canvas pixel width
         public int pHeight;         // Canvas pixel height
         public float tileScale;     // Canvas-to-window scale
         
-        // User-defined (or derived) quantities
-        public int tMinWidth;
-        public int tMinHeight;
+        // Testing: tHalo = 0 (should be at least 2)
         public int tWidth;      // # of (full) tiles per width
         public int tHeight;     // # of (full) tiles per height
-        public int tHalo;       // # of rendered tiles outside viewport
+        public int tHalo = 0;   // # of rendered tiles outside viewport
         
-        // Camera position
+        // Camera position (focal tile)
         public int pX;      // Camera X position in pixels
         public int pY;      // Camera Y position in pixels
         public int tX;      // Tile.X containing camera
         public int tY;      // Tile.Y containing camera
+        
+        // Canvas loop hoisting
+        public int tStartX;
+        public int tEndX;
+        public int tStartY;
+        public int tEndY;
         
         // Mosaic parameters
         // (Note: Testing with default arguments)
@@ -81,9 +89,19 @@ namespace Tesserae
             
             camera = tileScale * (new Vector2((float)pX, (float)pY));
             
+            // Loop hoisting
+            tStartX = tX - tWidth / 2 + 1 - tHalo;
+            tEndX = tX + tWidth / 2 + 1 + tHalo;
+            tStartY = tY - tHeight / 2 + 1 - tHalo;
+            tEndY = tY + tHeight / 2 + 1 + tHalo;
+            
+            Console.WriteLine("i: {0}..{1}", tStartX, tEndX);
+            Console.WriteLine("j: {0}..{1}", tStartY, tEndY);
+            
             // Testing
             Console.WriteLine(" Pixel Width: {0}", pWindowWidth);
             Console.WriteLine("Pixel Height: {0}", pWindowHeight);
+            Console.WriteLine("      pX, pY: {0}, {1}", pX, pY);
         }
         
         public void UpdateViewport(object sender, EventArgs e)
