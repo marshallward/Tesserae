@@ -12,19 +12,15 @@ using TiledSharp;
 namespace Tesserae
 {
 
-    // Canvas tracks three coordinate systems: 
-    // 1. pScreenWidth/Height: The window pixel count
-    // 2. pWidth/Height: The unscaled (virtual) pixel count
-    // 3. tWidth/Height: The (full) tile count        
+    // Canvas tracks three coordinate systems:
+    // 1. pWidth/Height: Canvas pixel count
+    // 2. tWidth/Height: Canvas tile count
     public class Canvas
     {
-        // Window-defined properties
-        public int pScreenWidth;          // Viewport width in pixels
-        public int pScreenHeight;         // Viewport height in pixels
-        
-        // Unscaled window pixel size
-        public int pWidth;
-        public int pHeight;
+        // Virtual window pixel size
+        public int pWidth;          // Canvas pixel width
+        public int pHeight;         // Canvas pixel height
+        public float tileScale;     // Canvas-to-window scale
         
         // User-defined (or derived) quantities
         public int tMinWidth;
@@ -40,9 +36,9 @@ namespace Tesserae
         public int tY;      // Tile.Y containing camera
         
         // Mosaic parameters
-        public int pTileWidth;      // Tile width in pixels
-        public int pTileHeight;     // Tile height in pixels
-        public float tileScale;     // Displayed / actual pixel height
+        // (Note: Testing with default arguments)
+        public int pTileWidth = 16;      // Tile width in pixels
+        public int pTileHeight = 16;     // Tile height in pixels
         
         // Necessary?
         Game game;
@@ -53,32 +49,24 @@ namespace Tesserae
             game = gameInput;
             
             // Screen pixel count
-            pScreenWidth = game.GraphicsDevice.Viewport.Bounds.Width;
-            pScreenHeight = game.GraphicsDevice.Viewport.Bounds.Height;            
+            var pWindowWidth = game.GraphicsDevice.Viewport.Bounds.Width;
+            var pWindowHeight = game.GraphicsDevice.Viewport.Bounds.Height;            
             
             // Probably the best control parameters:
             // Define minimum tile width/height, allow to expand
             tMinWidth = 15;
             tMinHeight = 15;
             
-            // Testing (Input arguments?)
-            pTileWidth = pTileHeight = 16;
-            //tHeight = 15;
-            
             // Determine the minimum scaling
-            var xScale = (float)pScreenWidth / (pTileWidth * tMinWidth);
-            var yScale = (float)pScreenHeight / (pTileHeight * tMinHeight);
+            var xScale = (float)pWindowWidth / (pTileWidth * tMinWidth);
+            var yScale = (float)pWindowHeight / (pTileHeight * tMinHeight);
             tileScale = Math.Min(xScale, yScale);
-            tWidth = (int)Math.Round(pScreenWidth / (pTileWidth * tileScale));
-            tHeight = (int)Math.Round(pScreenHeight / (pTileHeight * tileScale));
-            
-            // Determine other tilecounts based on viewport pixel size
-            //tileScale = (float)pScreenHeight / (float)(pTileHeight * tHeight);
-            //tWidth = (int)Math.Round(pScreenWidth / (pTileWidth * tileScale));
+            tWidth = (int)Math.Round(pWindowWidth / (pTileWidth * tileScale));
+            tHeight = (int)Math.Round(pWindowHeight / (pTileHeight * tileScale));
             
             // Virtual height is prescribed (i.e. window-independent)
-            pHeight = (int)Math.Round(pScreenHeight / tileScale);
-            pWidth = (int)Math.Round(pScreenWidth / tileScale);
+            pHeight = (int)Math.Round(pWindowHeight / tileScale);
+            pWidth = (int)Math.Round(pWindowWidth / tileScale);
             
             // Initialize camera on center or left/below centre pixel
             pX = (pWidth - 1) / 2;
@@ -89,17 +77,17 @@ namespace Tesserae
             
             camera = tileScale * (new Vector2((float)pX, (float)pY));
             
-            game.Window.ClientSizeChanged += new EventHandler<EventArgs>
-                (UpdateViewport);
+            game.Window.ClientSizeChanged += UpdateViewport;
         }
         
         public void UpdateViewport(object sender, EventArgs e)
         {
-            // Disable this event?
+            // Disable the event to avoid race condition
+            game.Window.ClientSizeChanged -= UpdateViewport;
             
             // Screen pixel count
-            pScreenWidth = game.GraphicsDevice.Viewport.Bounds.Width;
-            pScreenHeight = game.GraphicsDevice.Viewport.Bounds.Height;
+            var pScreenWidth = game.GraphicsDevice.Viewport.Bounds.Width;
+            var pScreenHeight = game.GraphicsDevice.Viewport.Bounds.Height;
             
             // Determine the minimum scaling
             var xScale = (float)pScreenWidth / (pTileWidth * tMinWidth);
@@ -124,7 +112,8 @@ namespace Tesserae
             Console.WriteLine(" Pixel Width: {0}", pScreenWidth);
             Console.WriteLine("Pixel Height: {0}", pScreenHeight);
             
-            // Re-enable this event?
+            // Re-enable the event
+            game.Window.ClientSizeChanged += UpdateViewport;
         }
     }
 }
