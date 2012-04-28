@@ -50,6 +50,7 @@ namespace Tesserae
         // Necessary?
         Game game;
         public Vector2 camera;
+        public Vector2 origin;
         
         public Canvas(Game gameInput)
         {
@@ -64,10 +65,10 @@ namespace Tesserae
             var pWindowWidth = game.GraphicsDevice.Viewport.Bounds.Width;
             var pWindowHeight = game.GraphicsDevice.Viewport.Bounds.Height;            
             
-            // Probably the best control parameters:
+            // Testing
             // Define minimum tile width/height, allow to expand
-            tMinWidth = 16;
-            tMinHeight = 16;
+            tMinWidth = 15;
+            tMinHeight = 15;
             
             // Determine the minimum scaling
             var xScale = (float)pWindowWidth / (pTileWidth * tMinWidth);
@@ -80,29 +81,43 @@ namespace Tesserae
             pHeight = (int)Math.Round(pWindowHeight / tileScale);
             pWidth = (int)Math.Round(pWindowWidth / tileScale);
             
-            // Testing
-            // Initialize camera on centre or left/above centre pixel
-            pX = (pWidth - 1) / 2;
-            pY = (pHeight - 1) / 2;
-            tX = pX / pTileWidth;
-            tY = pY / pTileHeight;
-            Console.WriteLine("tX, tWidth: {0}, {1}", tX, tWidth);
+            //----
+            // Testing (Normally pX,pY would be set externally)
             
-            // Loop hoisting
+            // Get centre pixel (or left/above centre)
+            var pXc = (pWidth - 1) / 2;
+            var pYc = (pHeight - 1) / 2;
+            
+            // Get tile index containing the pixel
+            tX = pXc / pTileWidth;
+            tY = pYc / pTileHeight;
+            
+            // Readjust pX, pY to the centre of the tile
+            pX = tX * pTileWidth + pTileWidth / 2;
+            pY = tY * pTileHeight + pTileHeight / 2;
+            
+            Console.WriteLine("tX, tWidth: {0}, {1}", tX, tWidth);
+            //--- End Testing
+            
+            // Visible tile range (tStart <= t < tEnd)
             tStartX = tX - (tWidth - 1) / 2 - tHalo;
             tEndX = tX + (tWidth - 1) / 2 + 1 + tHalo;
             tStartY = tY - (tHeight - 1) / 2 - tHalo;
             tEndY = tY + (tHeight - 1) / 2 + 1 + tHalo;
             
-            camera = tileScale * (new Vector2((float)pX, (float)pY));
+            camera = new Vector2((float)pX, (float)pY);
+            origin = camera - new Vector2((float)pXc, (float)pYc) - Vector2.One;
             
-            Console.WriteLine("i: {0}..{1}", tStartX, tEndX);
-            Console.WriteLine("j: {0}..{1}", tStartY, tEndY);
+            Console.WriteLine("pXc, pYc: {0},{1}", pXc, pYc);
+            Console.WriteLine("Camera: {0}", camera.ToString());
+            Console.WriteLine("Origin: {0}", origin.ToString());
             
             // Testing
-            Console.WriteLine(" Pixel Width: {0}", pWindowWidth);
+            Console.WriteLine("i: {0}..{1}", tStartX, tEndX);
+            Console.WriteLine("j: {0}..{1}", tStartY, tEndY);
+            Console.WriteLine("Pixel Width : {0}", pWindowWidth);
             Console.WriteLine("Pixel Height: {0}", pWindowHeight);
-            Console.WriteLine("      pX, pY: {0}, {1}", pX, pY);
+            Console.WriteLine("pX, pY      : {0}, {1}", pX, pY);
         }
         
         public void UpdateViewport(object sender, EventArgs e)

@@ -106,13 +106,13 @@ namespace Tesserae
                         // Skip unmapped cells
                         if (id == 0) continue;
                         
-                        // Pre-calculate?
+                        // Pre-calculate? (only if tileScale is unneeded)
                         var position = new Vector2(
                                         map.TileWidth * canvas.tileScale * i,
                                         map.TileHeight * canvas.tileScale * j);
                         
                         batch.Draw(spriteSheet[idSheet[id]], position,
-                                tileRect[id], Color.White, 0.0f, Vector2.Zero,
+                                tileRect[id], Color.White, 0.0f, canvas.origin,
                                 canvas.tileScale, SpriteEffects.None, 0);
                     }
                 }
