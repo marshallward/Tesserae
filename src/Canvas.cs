@@ -17,8 +17,8 @@ namespace Tesserae
     public class Canvas
     {
         // User-defined (or derived) fields
-        public int tMinWidth;
-        public int tMinHeight;
+        public int tMaxWidth;
+        public int tMaxHeight;
         
         // Canvas size
         public int pWidth;          // Canvas pixel width
@@ -67,13 +67,13 @@ namespace Tesserae
             
             // Testing
             // Define minimum tile width/height, allow to expand
-            tMinWidth = 15;
-            tMinHeight = 15;
+            tMaxWidth = 15;
+            tMaxHeight = 15;
             
             // Determine the minimum scaling
-            var xScale = (float)pWindowWidth / (pTileWidth * tMinWidth);
-            var yScale = (float)pWindowHeight / (pTileHeight * tMinHeight);
-            tileScale = Math.Min(xScale, yScale);
+            var xScale = (float)pWindowWidth / (pTileWidth * tMaxWidth);
+            var yScale = (float)pWindowHeight / (pTileHeight * tMaxHeight);
+            tileScale = Math.Max(xScale, yScale);
             tWidth = (int)Math.Round(pWindowWidth / (pTileWidth * tileScale));
             tHeight = (int)Math.Round(pWindowHeight / (pTileHeight * tileScale));
             
@@ -106,7 +106,7 @@ namespace Tesserae
             tEndY = tY + (tHeight - 1) / 2 + 1 + tHalo;
             
             camera = new Vector2((float)pX, (float)pY);
-            origin = camera - new Vector2((float)pXc, (float)pYc) - Vector2.One;
+            origin = camera - new Vector2((float)(pWidth/2), (float)(pHeight/2));
             
             Console.WriteLine("pXc, pYc: {0},{1}", pXc, pYc);
             Console.WriteLine("Camera: {0}", camera.ToString());

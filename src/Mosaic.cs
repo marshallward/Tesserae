@@ -106,7 +106,7 @@ namespace Tesserae
                         // Skip unmapped cells
                         if (id == 0) continue;
                         
-                        // Pre-calculate? (only if tileScale is unneeded)
+                        // Pre-calculate? (not with tileScale in there...)
                         var position = new Vector2(
                                         map.TileWidth * canvas.tileScale * i,
                                         map.TileHeight * canvas.tileScale * j);
