@@ -66,8 +66,8 @@ namespace Tesserae
             
             // Probably the best control parameters:
             // Define minimum tile width/height, allow to expand
-            tMinWidth = 15;
-            tMinHeight = 15;
+            tMinWidth = 16;
+            tMinHeight = 16;
             
             // Determine the minimum scaling
             var xScale = (float)pWindowWidth / (pTileWidth * tMinWidth);
@@ -80,20 +80,21 @@ namespace Tesserae
             pHeight = (int)Math.Round(pWindowHeight / tileScale);
             pWidth = (int)Math.Round(pWindowWidth / tileScale);
             
-            // Initialize camera on centre or left/below centre pixel
+            // Testing
+            // Initialize camera on centre or left/above centre pixel
             pX = (pWidth - 1) / 2;
             pY = (pHeight - 1) / 2;
             tX = pX / pTileWidth;
             tY = pY / pTileHeight;
             Console.WriteLine("tX, tWidth: {0}, {1}", tX, tWidth);
             
-            camera = tileScale * (new Vector2((float)pX, (float)pY));
-            
             // Loop hoisting
-            tStartX = tX - tWidth / 2 + 1 - tHalo;
-            tEndX = tX + tWidth / 2 + 1 + tHalo;
-            tStartY = tY - tHeight / 2 + 1 - tHalo;
-            tEndY = tY + tHeight / 2 + 1 + tHalo;
+            tStartX = tX - (tWidth - 1) / 2 - tHalo;
+            tEndX = tX + (tWidth - 1) / 2 + 1 + tHalo;
+            tStartY = tY - (tHeight - 1) / 2 - tHalo;
+            tEndY = tY + (tHeight - 1) / 2 + 1 + tHalo;
+            
+            camera = tileScale * (new Vector2((float)pX, (float)pY));
             
             Console.WriteLine("i: {0}..{1}", tStartX, tEndX);
             Console.WriteLine("j: {0}..{1}", tStartY, tEndY);
