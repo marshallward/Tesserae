@@ -69,7 +69,7 @@ namespace Tesserae
             var pWindowHeight = game.GraphicsDevice.Viewport.Bounds.Height;            
             
             // Testing
-            // Define minimum tile width/height, allow to expand
+            // Define maximum tile width/height
             tMaxWidth = 15;
             tMaxHeight = 15;
             
@@ -111,11 +111,11 @@ namespace Tesserae
             camera = new Vector2((float)pX, (float)pY);
             origin = camera - new Vector2((float)(pWidth/2), (float)(pHeight/2));
             
+            // Testing
             Console.WriteLine("pXc, pYc: {0},{1}", pXc, pYc);
             Console.WriteLine("Camera: {0}", camera.ToString());
             Console.WriteLine("Origin: {0}", origin.ToString());
             
-            // Testing
             Console.WriteLine("i: {0}..{1}", tStartX, tEndX);
             Console.WriteLine("j: {0}..{1}", tStartY, tEndY);
             Console.WriteLine("Pixel Width : {0}", pWindowWidth);

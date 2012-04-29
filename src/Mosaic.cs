@@ -21,20 +21,22 @@ namespace Tesserae
         public Dictionary<uint, TmxTileset> idSheet;
         public List<uint[,]> layerID;     // layerID[x,y]
         
-        public int tWidth, tHeight;
+        public int tMapWidth, tMapHeight;
         
         // Temporary
-        public TmxMap map;      // TMX data (try to remove this)
-        public Canvas canvas;   // Viewport details
+        public TmxMap map;          // TMX data (try to remove this)
+        public Canvas canvas;       // Viewport details
+        
+        public Game game;
+        public SpriteBatch batch;
         
         public Mosaic(Game game, string mapName) : base(game)
         {
             // Temporary code
             map = new TmxMap(mapName);
-            tWidth = map.Width;
-            tHeight = map.Height;
+            tMapWidth = map.Width;
+            tMapHeight = map.Height;
             
-            // Temporary code
             canvas = new Canvas(game);
             
             // Load spritesheets
@@ -77,7 +79,7 @@ namespace Tesserae
             layerID = new List<uint[,]>();
             foreach (TmxLayer layer in map.Layers)
             {
-                var idMap = new uint[tWidth, tHeight];
+                var idMap = new uint[tMapWidth, tMapHeight];
                 foreach (TmxLayerTile t in layer.Tiles)
                 {
                     idMap[t.X, t.Y] = t.GID;
@@ -92,10 +94,10 @@ namespace Tesserae
         {
             // Loop hoisting (Determined from Canvas)
             var iStart = Math.Max(0, canvas.tStartX);
-            var iEnd = Math.Min(this.tWidth, canvas.tEndX);
+            var iEnd = Math.Min(tMapWidth, canvas.tEndX);
             
             var jStart = Math.Max(0, canvas.tStartY);
-            var jEnd = Math.Min(this.tHeight, canvas.tEndY);
+            var jEnd = Math.Min(tMapHeight, canvas.tEndY);
             
             // Draw tiles inside canvas
             foreach (var idMap in layerID)
