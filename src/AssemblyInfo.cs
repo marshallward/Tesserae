@@ -5,13 +5,13 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("Tesserae")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("XNA-based TMX Map Renderer")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("Marshall Ward")]
+[assembly: AssemblyProduct("Tesserae")]
+[assembly: AssemblyCopyright("Copyright 2012 Marshall Ward")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyCulture("en-AU")]
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
