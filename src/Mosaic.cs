@@ -14,7 +14,7 @@ using TiledSharp;
 
 namespace Tesserae
 {
-    public class Mosaic : DrawableGameComponent
+    public class Mosaic
     {
         public Dictionary<TmxTileset, Texture2D> spriteSheet;
         public Dictionary<uint, Rectangle> tileRect;
@@ -30,9 +30,10 @@ namespace Tesserae
         public Game game;
         public SpriteBatch batch;
         
-        public Mosaic(Game game, string mapName) : base(game)
+        public Mosaic(Game gameInput, string mapName)
         {
             // Temporary code
+            game = gameInput;
             map = new TmxMap(mapName);
             tMapWidth = map.Width;
             tMapHeight = map.Height;
@@ -127,6 +128,7 @@ namespace Tesserae
         public Texture2D GetSpriteSheet(string filepath)
         {
             Texture2D newSheet;
+            Stream imgStream;
             
             var asm = Assembly.GetEntryAssembly();
             var manifest = asm.GetManifestResourceNames();
@@ -135,13 +137,12 @@ namespace Tesserae
                                 Path.DirectorySeparatorChar.ToString(), ".");
             var fileRes = Array.Find(manifest, s => s.EndsWith(fileResPath));
             if (fileRes != null)
-            {
-                Stream imgStream = asm.GetManifestResourceStream(fileRes);
-                newSheet = Texture2D.FromFile(this.GraphicsDevice, imgStream);
-            }
+                imgStream = asm.GetManifestResourceStream(fileRes);
             else
-                newSheet = Texture2D.FromFile(this.GraphicsDevice, filepath);
+                imgStream = File.OpenRead(filepath);
             
+            // XNA 4.0 uses FromStream (patch to MonoGame?)
+            newSheet = Texture2D.FromFile(game.GraphicsDevice, imgStream);
             return newSheet;
         }
     }
