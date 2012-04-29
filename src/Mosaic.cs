@@ -28,6 +28,7 @@ namespace Tesserae
         public Canvas canvas;       // Viewport details
         
         public Game game;
+        public RenderTarget2D renderTarget;
         public SpriteBatch batch;
         
         public Mosaic(Game gameInput, string mapName)
@@ -38,7 +39,9 @@ namespace Tesserae
             tMapWidth = map.Width;
             tMapHeight = map.Height;
             
+            // Initialize graphics buffers
             canvas = new Canvas(game);
+            renderTarget = new RenderTarget2D(game.GraphicsDevice, 720, 720);
             
             // Load spritesheets
             spriteSheet = new Dictionary<TmxTileset, Texture2D>();
@@ -91,7 +94,7 @@ namespace Tesserae
             }
         }
         
-        public void Draw(SpriteBatch batch)
+        public void DrawCanvas(SpriteBatch batch)
         {
             // Loop hoisting (Determined from Canvas)
             var iStart = Math.Max(0, canvas.tStartX);
@@ -100,6 +103,12 @@ namespace Tesserae
             var jStart = Math.Max(0, canvas.tStartY);
             var jEnd = Math.Min(tMapHeight, canvas.tEndY);
             
+            // Initialize the renderTarget spriteBatch
+            game.GraphicsDevice.Clear(Color.CornflowerBlue);
+            game.GraphicsDevice.SetRenderTarget(renderTarget);
+            
+            batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
+                              SamplerState.PointClamp, null, null);
             // Draw tiles inside canvas
             foreach (var idMap in layerID)
             {
@@ -123,6 +132,11 @@ namespace Tesserae
                     }
                 }
             }
+            batch.End();
+            
+            // Close render target
+            game.GraphicsDevice.SetRenderTarget(null);
+
         }
         
         public Texture2D GetSpriteSheet(string filepath)
@@ -141,7 +155,7 @@ namespace Tesserae
             else
                 imgStream = File.OpenRead(filepath);
             
-            // XNA 4.0 uses FromStream (patch to MonoGame?)
+            // XNA4 uses FromStream, MonoGame/Linux uses FromFile
             newSheet = Texture2D.FromFile(game.GraphicsDevice, imgStream);
             return newSheet;
         }
