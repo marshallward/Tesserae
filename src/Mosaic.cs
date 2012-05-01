@@ -104,8 +104,8 @@ namespace Tesserae
             var jEnd = Math.Min(tMapHeight, canvas.tEndY);
             
             // Initialize the renderTarget spriteBatch
-            game.GraphicsDevice.Clear(Color.CornflowerBlue);
             game.GraphicsDevice.SetRenderTarget(renderTarget);
+            game.GraphicsDevice.Clear(Color.CornflowerBlue);
             
             batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
                               SamplerState.PointClamp, null, null);
@@ -155,8 +155,7 @@ namespace Tesserae
             else
                 imgStream = File.OpenRead(filepath);
             
-            // XNA4 uses FromStream, MonoGame/Linux uses FromFile
-            newSheet = Texture2D.FromFile(game.GraphicsDevice, imgStream);
+            newSheet = Texture2D.FromStream(game.GraphicsDevice, imgStream);
             return newSheet;
         }
     }
