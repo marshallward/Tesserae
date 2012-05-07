@@ -70,7 +70,7 @@ namespace Tesserae
             
             // Testing
             // Define maximum tile width/height
-            tMaxWidth = 15;
+            tMaxWidth = 30;
             tMaxHeight = 15;
             
             // Determine the minimum scaling
@@ -99,7 +99,7 @@ namespace Tesserae
             pX = tX * pTileWidth + pTileWidth / 2;
             pY = tY * pTileHeight + pTileHeight / 2;
             
-            Console.WriteLine("tX, tWidth: {0}, {1}", tX, tWidth);
+//            Console.WriteLine("tX, tWidth: {0}, {1}", tX, tWidth);
             //--- End Testing
             
             // Visible tile range (tStart <= t < tEnd)
@@ -112,21 +112,29 @@ namespace Tesserae
             origin = camera - new Vector2((float)(pWidth/2), (float)(pHeight/2));
             
             // Testing
-            Console.WriteLine("pXc, pYc: {0},{1}", pXc, pYc);
-            Console.WriteLine("Camera: {0}", camera.ToString());
-            Console.WriteLine("Origin: {0}", origin.ToString());
-            
-            Console.WriteLine("i: {0}..{1}", tStartX, tEndX);
-            Console.WriteLine("j: {0}..{1}", tStartY, tEndY);
-            Console.WriteLine("Pixel Width : {0}", pWindowWidth);
-            Console.WriteLine("Pixel Height: {0}", pWindowHeight);
-            Console.WriteLine("pX, pY      : {0}, {1}", pX, pY);
+//            Console.WriteLine("pXc, pYc: {0},{1}", pXc, pYc);
+//            Console.WriteLine("Camera: {0}", camera.ToString());
+//            Console.WriteLine("Origin: {0}", origin.ToString());
+//            
+//            Console.WriteLine("i: {0}..{1}", tStartX, tEndX);
+//            Console.WriteLine("j: {0}..{1}", tStartY, tEndY);
+//            Console.WriteLine("Pixel Width : {0}", pWindowWidth);
+//            Console.WriteLine("Pixel Height: {0}", pWindowHeight);
+//            Console.WriteLine("pX, pY      : {0}, {1}", pX, pY);
         }
         
         public void UpdateViewport(object sender, EventArgs e)
         {
             game.Window.ClientSizeChanged -= UpdateViewport;
             RescaleCanvas();
+            // Some Diagnostics
+            Console.WriteLine("Viewport: {0}, {1}",
+                              game.GraphicsDevice.Viewport.Width,
+                              game.GraphicsDevice.Viewport.Height);
+            Console.WriteLine("Window: {0}",
+                              game.Window.ClientBounds.ToString());
+            Console.WriteLine("Bounds: {0}",
+                              game.GraphicsDevice.PresentationParameters.Bounds.ToString());
             game.Window.ClientSizeChanged += UpdateViewport;
         }
     }

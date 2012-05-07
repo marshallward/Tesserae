@@ -41,7 +41,9 @@ namespace Tesserae
             
             // Initialize graphics buffers
             canvas = new Canvas(game);
-            renderTarget = new RenderTarget2D(game.GraphicsDevice, 720, 720);
+            renderTarget = new RenderTarget2D(game.GraphicsDevice,
+                                              game.GraphicsDevice.Viewport.Width,
+                                              game.GraphicsDevice.Viewport.Height);
             
             // Load spritesheets
             spriteSheet = new Dictionary<TmxTileset, Texture2D>();
