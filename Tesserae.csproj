@@ -31,8 +31,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="MonoGame.Framework.Linux">
-      <HintPath>..\MonoGame\MonoGame.Framework\bin\Release\MonoGame.Framework.Linux.dll</HintPath>
+    <Reference Include="MonoGame.Framework">
+      <HintPath>..\MonoGame\MonoGame.Framework\bin\Linux\Debug\MonoGame.Framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -42,7 +42,7 @@
     <Compile Include="src\Mosaic.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TiledSharp\TiledSharp.csproj">
+    <ProjectReference Include="..\TiledSharp\TiledSharp\TiledSharp.csproj">
       <Project>{E4130F8D-D301-4E0C-916D-489C4A23C9B1}</Project>
       <Name>TiledSharp</Name>
     </ProjectReference>

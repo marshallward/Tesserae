@@ -17,9 +17,9 @@ namespace Tesserae
     public class Mosaic
     {
         public Dictionary<TmxTileset, Texture2D> spriteSheet;
-        public Dictionary<uint, Rectangle> tileRect;
-        public Dictionary<uint, TmxTileset> idSheet;
-        public List<uint[,]> layerID;     // layerID[x,y]
+        public Dictionary<int, Rectangle> tileRect;
+        public Dictionary<int, TmxTileset> idSheet;
+        public List<int[,]> layerID;     // layerID[x,y]
         
         public int tMapWidth, tMapHeight;
         
@@ -47,8 +47,8 @@ namespace Tesserae
             
             // Load spritesheets
             spriteSheet = new Dictionary<TmxTileset, Texture2D>();
-            tileRect = new Dictionary<uint, Rectangle>();
-            idSheet = new Dictionary<uint, TmxTileset>();
+            tileRect = new Dictionary<int, Rectangle>();
+            idSheet = new Dictionary<int, TmxTileset>();
             
             foreach (TmxTileset ts in map.Tilesets)
             {
@@ -82,13 +82,13 @@ namespace Tesserae
             }
             
             // Load id maps
-            layerID = new List<uint[,]>();
+            layerID = new List<int[,]>();
             foreach (TmxLayer layer in map.Layers)
             {
-                var idMap = new uint[tMapWidth, tMapHeight];
+                var idMap = new int[tMapWidth, tMapHeight];
                 foreach (TmxLayerTile t in layer.Tiles)
                 {
-                    idMap[t.X, t.Y] = t.GID;
+                    idMap[t.X, t.Y] = t.Gid;
                 }
                 layerID.Add(idMap);
                 
