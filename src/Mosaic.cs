@@ -58,11 +58,11 @@ namespace Tesserae
                 // Loop hoisting
                 var wStart = ts.Margin;
                 var wInc = ts.TileWidth + ts.Spacing;
-                var wEnd = ts.Image.Width;
+                var wEnd = newSheet.Width;
                 
                 var hStart = ts.Margin;
                 var hInc = ts.TileHeight + ts.Spacing;
-                var hEnd = ts.Image.Height;
+                var hEnd = newSheet.Height;
                 
                 // Pre-compute tileset rectangles
                 var id = ts.FirstGid;
